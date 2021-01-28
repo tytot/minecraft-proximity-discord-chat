@@ -1,0 +1,14 @@
+.vscode/
+
+api/node_modules
+
+Application/.vs
+Application/App.config
+Application/bin
+Application/obj
+
+plugin/.classpath
+plugin/.project
+plugin/.settings
+plugin/src/test
+plugin/target

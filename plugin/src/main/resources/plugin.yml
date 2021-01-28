@@ -1,0 +1,8 @@
+name: ProximityTracker
+main: in.tylerl.proximitytracker.ProximityTracker
+version: 1.0.0
+author: Tyler Lin
+api-version: 1.16
+description: Tracks player proximity for Discord proximity voice chat.
+website: https://github.com/tytot/minecraft-proximity-chat-discord
+prefix: Proximity

@@ -1,0 +1,17 @@
+#    ______   ______     ______     __  __     __     __    __     __     ______   __  __    
+#   /\  == \ /\  == \   /\  __ \   /\_\_\_\   /\ \   /\ "-./  \   /\ \   /\__  _\ /\ \_\ \   
+#   \ \  _-/ \ \  __<   \ \ \/\ \  \/_/\_\/_  \ \ \  \ \ \-./\ \  \ \ \  \/_/\ \/ \ \____ \  
+#    \ \_\    \ \_\ \_\  \ \_____\   /\_\/\_\  \ \_\  \ \_\ \ \_\  \ \_\    \ \_\  \/\_____\ 
+#     \/_/     \/_/ /_/   \/_____/   \/_/\/_/   \/_/   \/_/  \/_/   \/_/     \/_/   \/_____/ 
+                                                                                         
+# The number of milliseconds between each proximity broadcast to the server (default: 1000)
+broadcastInterval: 1000
+
+# The number of blocks away at which other players can no longer be heard (default: 25)
+cutoff: 25
+
+# The IP address of the server to broadcast to (default: 127.0.0.1)
+ip: 127.0.0.1
+
+# THe port of the server to broadcast to (default: 8000)
+port: 2021
