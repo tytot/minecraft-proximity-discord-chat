@@ -1,11 +1,12 @@
+.vs/
 .vscode/
 
 api/node_modules
 
-Application/.vs
-Application/App.config
-Application/bin
-Application/obj
+MCProximity/*.user
+MCProximity/App.config
+MCProximity/bin
+MCProximity/obj
 
 plugin/.classpath
 plugin/.project
