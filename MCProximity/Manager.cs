@@ -14,16 +14,18 @@ namespace MCProximity
 {
     readonly struct VoiceMember
     {
-        public VoiceMember(string username, bool inServer, bool hearable)
+        public VoiceMember(string username, bool inServer, bool hearable, bool muted)
         {
             Username = username;
             IsInServer = inServer;
             IsHearable = hearable;
+            IsMuted = muted;
         }
 
         public string Username { get; }
         public bool IsInServer { get; }
         public bool IsHearable { get; }
+        public bool IsMuted { get; }
     }
 
     class Manager
@@ -184,22 +186,39 @@ namespace MCProximity
                 {
                     Trace.WriteLine("Disconnected from proximity lobby.");
 
-                    Trace.WriteLine(await UnmapName());
+                    await UnmapName();
 
                     if (lobbyId != -1)
                     {
                         lobbyId = -1;
                     }
+                    username = null;
 
                     callback();
                 }
             });
         }
 
-        public async Task<string> UnmapName()
+        public async Task UnmapName()
         {
+            await MuteSelf(false);
             var response = await client.DeleteAsync($"http://{ip}:2021/{username}");
-            return response.Content.ReadAsStringAsync().Result;
+            Trace.WriteLine(response.Content.ReadAsStringAsync().Result);
+        }
+
+        public async Task MuteSelf(bool mute)
+        {
+            voiceManager.SetSelfMute(mute);
+
+            var json = new JObject
+                    {
+                        { "name",  username },
+                        { "mute", mute }
+                    };
+            var data = new StringContent(JsonConvert.SerializeObject(json), Encoding.UTF8, "application/json");
+
+            var response = await client.PostAsync($"http://{ip}:2021/muted", data);
+            Trace.WriteLine(response.Content.ReadAsStringAsync().Result);
         }
 
         // Updates local volumes of other members in the call
@@ -209,16 +228,19 @@ namespace MCProximity
             {
                 var proximityTask = client.GetAsync($"http://{ip}:2021/{username}");
                 var mapTask = client.GetStringAsync($"http://{ip}:2021/map");
+                var mutedTask = client.GetStringAsync($"http://{ip}:2021/muted");
 
                 var proximityResponse = await proximityTask;
                 string mapBody = await mapTask;
+                string mutedBody = await mutedTask;
                 JObject map = JObject.Parse(mapBody);
+                JArray muted = JArray.Parse(mutedBody);
 
                 var voiceMembers = new List<VoiceMember>();
 
                 if (proximityResponse.StatusCode != HttpStatusCode.NotFound)
                 {
-                    voiceMembers.Add(new VoiceMember(username, true, true));
+                    voiceMembers.Add(new VoiceMember(username, true, true, ContainsName(muted, username)));
 
                     var proximityBody = proximityResponse.Content.ReadAsStringAsync().Result;
                     // Trace.WriteLine("Proximities = " + proximityBody);
@@ -240,13 +262,15 @@ namespace MCProximity
                                 // Trace.WriteLine(volume + " -> " + newVolume);
                                 voiceManager.SetLocalVolume(userId, newVolume);
 
-                                voiceMembers.Add(new VoiceMember(username, true, newVolume > 0));
+                                voiceMembers.Add(new VoiceMember(username, true, newVolume > 0, ContainsName(muted, username)));
                             }
-                            else if (voiceManager.GetLocalVolume(userId) != 100)
+                            else 
                             {
-                                voiceManager.SetLocalVolume(userId, 100);
-
-                                voiceMembers.Add(new VoiceMember(username, false, true));
+                                if (voiceManager.GetLocalVolume(userId) != 100)
+                                {
+                                    voiceManager.SetLocalVolume(userId, 100);
+                                }
+                                voiceMembers.Add(new VoiceMember(username, false, true, ContainsName(muted, username)));
                             }
                         }
                     }
@@ -258,7 +282,11 @@ namespace MCProximity
                         long userId = Convert.ToInt64(property.Value);
                         string username = property.Name;
 
-                        voiceMembers.Add(new VoiceMember(username, false, true));
+                        if (voiceManager.GetLocalVolume(userId) != 100)
+                        {
+                            voiceManager.SetLocalVolume(userId, 100);
+                        }
+                        voiceMembers.Add(new VoiceMember(username, false, true, ContainsName(muted, username)));
                     }
                 }
                 return voiceMembers;
@@ -271,13 +299,32 @@ namespace MCProximity
             return null;
         }
 
+        private bool ContainsName(JArray arr, String name)
+        {
+            foreach (var item in arr.Children())
+            {
+                if (item.ToString().Equals(name))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         // Returns true if proximity data was updated
         public bool RunCallbacks()
         {
             bool update = false;
 
-            discord.RunCallbacks();
-            lobbyManager.FlushNetwork();
+            try
+            {
+                discord.RunCallbacks();
+                lobbyManager.FlushNetwork();
+            }
+            catch (Exception e)
+            {
+                Trace.WriteLine(e);
+            }
             if (callbackCounter >= 5 && lobbyId != -1)
             {
                 callbackCounter = 0;

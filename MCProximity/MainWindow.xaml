@@ -14,15 +14,15 @@
         <Separator Height="12" HorizontalAlignment="Stretch" Margin="0,44,0,0" VerticalAlignment="Top"/>
         <TextBlock HorizontalAlignment="Left" Height="22" Margin="16,60,0,0" Text="Status:" TextWrapping="Wrap" VerticalAlignment="Top" Width="48"/>
         <TextBlock Name="Status" FontWeight="Bold" Foreground="Red" HorizontalAlignment="Left" Height="22" Margin="56,60,0,0" Text="Disconnected" TextWrapping="Wrap" VerticalAlignment="Top" Width="170"/>
-        <Border Background="Black" BorderBrush="Black" BorderThickness="1" Margin="16,86,16,112">
+        <Border BorderBrush="Black" BorderThickness="0.5" Margin="16,86,16,112">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <WrapPanel Name="Participants" Background="LightGray" Margin="0,0,0,0">
                 </WrapPanel>
             </ScrollViewer>
         </Border>
-        <Button Background="Red" Content="&#xE778;" FontFamily="Segoe MDL2 Assets" FontSize="32" Foreground="White" HorizontalAlignment="Center" Margin="60,0,0,50" VerticalAlignment="Bottom" Click="Disconnect" Height="48" Width="48"/>
-        <Button Background="Gray" Content="&#xE767;" FontFamily="Segoe MDL2 Assets" FontSize="32" Foreground="White" HorizontalAlignment="Center" Margin="-60,0,0,50" VerticalAlignment="Bottom" Click="Unmute" Height="48" Width="48"/>
-        <Button Background="Gray" Content="&#xE74F;" FontFamily="Segoe MDL2 Assets" FontSize="32" Foreground="White" HorizontalAlignment="Center" Margin="-60,0,0,50" VerticalAlignment="Bottom" Click="Mute" Height="48" Width="48"/>
+        <Button Name="HangUp" Background="Red" Content="&#xE778;" FontFamily="Segoe MDL2 Assets" FontSize="32" Foreground="White" HorizontalAlignment="Center" Margin="60,0,0,50" VerticalAlignment="Bottom" Click="Disconnect" Height="48" Width="48"/>
+        <Button Name="MuterBack" Background="Gray" Content="&#xE767;" FontFamily="Segoe MDL2 Assets" FontSize="32" Foreground="White" HorizontalAlignment="Center" Margin="-60,0,0,50" VerticalAlignment="Bottom" Click="Unmute" Height="48" Width="48"/>
+        <Button Name="Muter" Background="Gray" Content="&#xE74F;" FontFamily="Segoe MDL2 Assets" FontSize="32" Foreground="White" HorizontalAlignment="Center" Margin="-60,0,0,50" VerticalAlignment="Bottom" Click="Mute" Height="48" Width="48"/>
         <Separator Height="12" HorizontalAlignment="Stretch" Margin="0,0,0,32" VerticalAlignment="Bottom"/>
         <TextBlock HorizontalAlignment="Left" Margin="16,0,0,10" Text="by Tyler Lin — tylerhlin@gmail.com" TextWrapping="Wrap" VerticalAlignment="Bottom" Height="18" Width="194"/>
     </Grid>

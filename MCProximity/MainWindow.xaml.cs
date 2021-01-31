@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Configuration;
 using System.Diagnostics;
-using System.Media;
-using System.Net.Http;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace MCProximity
@@ -33,29 +29,42 @@ namespace MCProximity
             CONNECTION_FAILED
         }
 
-        private Dictionary<string, Canvas> canvasCache;
+        private readonly Dictionary<string, Canvas> canvasCache;
 
-        private MediaPlayer player;
+        private readonly string EarIcon = "\xF270";
+        private readonly string GlobeIcon = "\xE774";
+        private readonly string MuteIcon = "\xE74F";
+
+        private readonly string JoinSound = "Sound/join.wav";
+        private readonly string LeaveSound = "Sound/leave.wav";
+        private readonly string MuteSound = "Sound/mute.wav";
+        private readonly string UnmuteSound = "Sound/unmute.wav";
+
+        private readonly MediaPlayer player;
 
         public MainWindow()
         {
             InitializeComponent();
+            SetFooterEnabled(false);
+
             manager = new Manager();
 
             status = ConnectionStatus.DISCONNECTED;
             
             canvasCache = new Dictionary<string, Canvas>();
 
-            player = new MediaPlayer();
-            player.Volume = 0.5;
+            player = new MediaPlayer
+            {
+                Volume = 0.5
+            };
 
             manager.Join += (object sender, EventArgs e) =>
             {
-                PlayJoinSound();
+                PlaySound(JoinSound);
             };
             manager.Leave += (object sender, EventArgs e) =>
             {
-                PlayLeaveSound();
+                PlaySound(LeaveSound);
             };
 
             DispatcherTimer timer = new DispatcherTimer();
@@ -64,15 +73,9 @@ namespace MCProximity
             timer.Start();
         }
 
-        private void PlayJoinSound()
+        private void PlaySound(string path)
         {
-            player.Open(new Uri("Sound/join.wav", UriKind.Relative));
-            player.Play();
-        }
-
-        private void PlayLeaveSound()
-        {
-            player.Open(new Uri("Sound/leave.wav", UriKind.Relative));
+            player.Open(new Uri(path, UriKind.Relative));
             player.Play();
         }
 
@@ -88,8 +91,9 @@ namespace MCProximity
                 {
                     if (success)
                     {
+                        SetFooterEnabled(true);
                         SetConnectionStatus(ConnectionStatus.CONNECTED);
-                        PlayJoinSound();
+                        PlaySound(JoinSound);
                     }
                     else
                     {
@@ -111,11 +115,12 @@ namespace MCProximity
                 manager.DisconnectFromProximityLobby(() =>
                 {
                     SetHeaderEnabled(true);
+                    SetFooterEnabled(false);
                     SetConnectionStatus(ConnectionStatus.DISCONNECTED);
 
                     Participants.Children.Clear();
 
-                    PlayLeaveSound();
+                    PlaySound(LeaveSound);
                 });
             }
         }
@@ -124,7 +129,9 @@ namespace MCProximity
         {
             if (status == ConnectionStatus.CONNECTED)
             {
-                Trace.WriteLine(await manager.UnmapName());
+                SetHeaderEnabled(true);
+                SetFooterEnabled(false);
+                await manager.UnmapName();
             }
             manager.Dispose();
         }
@@ -134,6 +141,13 @@ namespace MCProximity
             UsernameLabel.IsEnabled = enabled;
             Username.IsEnabled = enabled;
             Join.IsEnabled = enabled;
+        }
+
+        private void SetFooterEnabled(bool enabled)
+        {
+            Muter.IsEnabled = enabled;
+            MuterBack.IsEnabled = enabled;
+            HangUp.IsEnabled = enabled;
         }
 
         private void SetConnectionStatus(ConnectionStatus status)
@@ -186,39 +200,77 @@ namespace MCProximity
             }
             else
             {
-                c = new Canvas();
-                c.Height = 120;
-                c.Width = 100;
+                c = new Canvas
+                {
+                    Height = 120,
+                    Width = 100
+                };
 
                 Image i;
-                i = new Image();
-                i.Height = 60;
-                i.Width = 60;
-                i.Source = new BitmapImage(new Uri("https://mc-heads.net/avatar/" + member.Username, UriKind.Absolute));
+                i = new Image
+                {
+                    Height = 60,
+                    Width = 60,
+                    Source = new BitmapImage(new Uri("https://mc-heads.net/avatar/" + member.Username, UriKind.Absolute))
+                };
                 Canvas.SetLeft(i, 20);
                 Canvas.SetTop(i, 20);
                 c.Children.Add(i);
 
-                TextBlock t = new TextBlock();
-                t.Text = member.Username;
-                t.TextAlignment = TextAlignment.Center;
-                t.TextWrapping = TextWrapping.NoWrap;
-                t.Width = 80;
+                TextBlock t = new TextBlock
+                {
+                    Text = member.Username,
+                    TextAlignment = TextAlignment.Center,
+                    TextWrapping = TextWrapping.NoWrap,
+                    Width = 80
+                };
                 Canvas.SetLeft(t, 10);
                 Canvas.SetTop(t, 92);
                 c.Children.Add(t);
 
-                TextBlock e = new TextBlock();
-                e.Name = "State";
-                e.Background = Brushes.White;
-                e.FontFamily = new FontFamily("Segoe MDL2 Assets");
-                e.FontSize = 16;
-                e.FontWeight = FontWeights.Bold;
-                e.Height = 20;
-                e.Width = 20;
-                e.Padding = new Thickness(2);
-                e.Text = "\xF270;";
-                e.TextAlignment = TextAlignment.Center;
+                Rectangle r = new Rectangle
+                {
+                    Name = "Overlay",
+                    Fill = Brushes.Black,
+                    Height = 60,
+                    Width = 60,
+                    Opacity = 0.75,
+                    Visibility = Visibility.Hidden
+                };
+                Canvas.SetLeft(r, 20);
+                Canvas.SetTop(r, 20);
+                c.Children.Add(r);
+
+                TextBlock m = new TextBlock
+                {
+                    Name = "Mic",
+                    FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                    FontSize = 42,
+                    FontWeight = FontWeights.Bold,
+                    Foreground = Brushes.White,
+                    Height = 60,
+                    Width = 60,
+                    Padding = new Thickness(10),
+                    Text = "",
+                    TextAlignment = TextAlignment.Center
+                };
+                Canvas.SetLeft(m, 20);
+                Canvas.SetTop(m, 20);
+                c.Children.Add(m);
+
+                TextBlock e = new TextBlock
+                {
+                    Name = "State",
+                    Background = Brushes.White,
+                    FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                    FontSize = 16,
+                    FontWeight = FontWeights.Bold,
+                    Height = 20,
+                    Width = 20,
+                    Padding = new Thickness(2),
+                    Text = EarIcon,
+                    TextAlignment = TextAlignment.Center
+                };
                 Canvas.SetLeft(e, 70);
                 Canvas.SetTop(e, 70);
                 c.Children.Add(e);
@@ -226,33 +278,71 @@ namespace MCProximity
                 canvasCache.Add(member.Username, c);
             }
 
-            TextBlock state = LogicalTreeHelper.FindLogicalNode(c, "State") as TextBlock;
-            if (member.IsInServer)
+            Rectangle overlay = LogicalTreeHelper.FindLogicalNode(c, "Overlay") as Rectangle;
+            if (member.IsMuted || !member.IsHearable)
             {
-                if (state.Text == "\xF270;")
+                if (overlay.Visibility == Visibility.Hidden)
                 {
-                    state.Text = "\xE774;";
+                    overlay.Visibility = Visibility.Visible;
                 }
             }
             else
             {
-                if (state.Text == "\xE774;")
+                if (overlay.Visibility == Visibility.Visible)
                 {
-                    state.Text = "\xF270;";
+                    overlay.Visibility = Visibility.Hidden;
+                }
+            }
+
+            TextBlock mic = LogicalTreeHelper.FindLogicalNode(c, "Mic") as TextBlock;
+            if (member.IsMuted)
+            {
+                if (mic.Text == "")
+                {
+                    mic.Text = MuteIcon;
+                }
+            }
+            else
+            {
+                if (mic.Text == MuteIcon)
+                {
+                    mic.Text = "";
+                }
+            }
+
+            TextBlock state = LogicalTreeHelper.FindLogicalNode(c, "State") as TextBlock;
+            if (member.IsInServer)
+            {
+                if (state.Text == GlobeIcon)
+                {
+                    state.Text = EarIcon;
+                }
+            }
+            else
+            {
+                if (state.Text == EarIcon)
+                {
+                    state.Text = GlobeIcon;
                 }
             }
 
             return c;
         }
 
-        private void Mute(object sender, RoutedEventArgs e)
+        private async void Mute(object sender, RoutedEventArgs e)
         {
+            Muter.Visibility = Visibility.Hidden;
+            PlaySound(MuteSound);
 
+            await manager.MuteSelf(true);
         }
 
-        private void Unmute(object sender, RoutedEventArgs e)
+        private async void Unmute(object sender, RoutedEventArgs e)
         {
+            Muter.Visibility = Visibility.Visible;
+            PlaySound(UnmuteSound);
 
+            await manager.MuteSelf(false);
         }
 
         private async void Refresh(object sender, EventArgs e)

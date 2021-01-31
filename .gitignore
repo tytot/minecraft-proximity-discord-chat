@@ -7,6 +7,7 @@ MCProximity/*.user
 MCProximity/App.config
 MCProximity/bin
 MCProximity/obj
+MCProximity/Properties
 
 plugin/.classpath
 plugin/.project
