@@ -2,16 +2,15 @@
   "name": "minecraft-proximity-chat-discord-api",
   "version": "1.0.0",
   "description": "API for Minecraft proximity voice chat in Discord",
-  "main": "app.js",
+  "main": "api.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node api.js"
   },
   "author": "Tyler Lin",
   "license": "GPL-3.0-only",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tytot/minecraft-proximity-chat-discord.git",
-    "directory": "api"
+    "url": "https://github.com/tytot/minecraft-proximity-chat-discord.git"
   },
   "dependencies": {
     "cors": "^2.8.5",
