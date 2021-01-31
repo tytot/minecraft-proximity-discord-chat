@@ -6,8 +6,6 @@ const app = express()
 app.use(express.json())
 app.use(cors())
 
-const port = 2021
-
 let data = {}
 const idMap = new Map()
 const muted = new Set()
@@ -61,6 +59,10 @@ app.delete('/:name', (req, res) => {
     res.send('Player ID unmapped.')
 })
 
+let port = process.env.PORT
+if (port == null || port == "") {
+    port = 2021;
+}
 app.listen(port, () => {
     console.log(`API listening at http://localhost:${port}`)
 })
