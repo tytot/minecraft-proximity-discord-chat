@@ -9,7 +9,8 @@ app.use(cors())
 const port = 2021
 
 let data = {}
-let idMap = new Map()
+const idMap = new Map()
+const muted = new Set()
 
 app.post('/', (req, res) => {
     data = req.body
@@ -23,6 +24,20 @@ app.get('/map', (req, res) => {
 
 app.get('/raw', (req, res) => {
     res.send(data)
+})
+
+app.post('/muted', (req, res) => {
+    const name = req.body.name
+    if (req.body.mute) {
+	muted.add(name)
+    } else {
+	muted.delete(name)
+    }
+    res.send('Mute change successful.')
+})
+
+app.get('/muted', (req, res) => {
+    res.send(Array.from(muted))
 })
 
 app.get('/:name', (req, res) => {
