@@ -10,8 +10,5 @@ broadcastInterval: 1000
 # The number of blocks away at which other players can no longer be heard (default: 25)
 cutoff: 25
 
-# The IP address of the server to broadcast to (default: 127.0.0.1)
-ip: 127.0.0.1
-
-# THe port of the server to broadcast to (default: 8000)
-port: 2021
+# The hostname of the proximity data API——you should have set this up earlier
+apiHost: xxx.herokuapp.com

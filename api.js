@@ -10,6 +10,11 @@ let data = {}
 const idMap = new Map()
 const muted = new Set()
 
+app.get('/', (req, res) => {
+    const host = req.get('host')
+    res.send('API successfully deployed! Use the following host in the plugin\'s config.yml: <b>' + host + '</b>')
+})
+
 app.post('/', (req, res) => {
     data = req.body
 //  console.log(data)

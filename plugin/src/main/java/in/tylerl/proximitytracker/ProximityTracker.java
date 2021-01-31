@@ -18,8 +18,8 @@ public class ProximityTracker extends JavaPlugin {
 		System.out.println("[Proximity] Broadcast interval: " + BROADCAST_INTERVAL + " ticks");
 		CUTOFF = config.getInt("cutoff", 50);
 		System.out.println("[Proximity] Voice cutoff: " + CUTOFF + " blocks");
-		URL = "http://" + config.getString("ip", "127.0.0.1") + ":" + config.getString("port", "8000");
-		System.out.println("[Proximity] Broadcast URL: " + URL);
+		URL = "https://" + config.getString("apiHost", "xxx.herokuapp.com");
+		System.out.println("[Proximity] API URL: " + URL);
 		
 		broadcaster = new Broadcaster();
 		broadcaster.runTaskTimerAsynchronously(this, 0L, BROADCAST_INTERVAL);

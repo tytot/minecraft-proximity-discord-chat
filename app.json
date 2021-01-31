@@ -1,0 +1,14 @@
+{
+    "name": "Minecraft Proximity Chat API",
+    "description": "Data API for Minecraft Proximity Chat.",
+    "keywords": [
+    	"Minecraft",
+    	"Proximity",
+    	"Discord",
+    	"API",
+	"Node.js"
+    ],
+    "repository": "https://github.com/tytot/minecraft-proximity-chat-discord",
+    "success_url": "/",
+    "addons": [ "newrelic:wayne" ]
+}
