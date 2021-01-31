@@ -9,6 +9,5 @@
 	"Node.js"
     ],
     "repository": "https://github.com/tytot/minecraft-proximity-chat-discord",
-    "success_url": "/",
-    "addons": [ "newrelic:wayne" ]
+    "success_url": "/"
 }

@@ -43,6 +43,10 @@ public class Broadcaster extends BukkitRunnable {
 		json += "}";
 //		System.out.println(json);
 
+		postToAPI(json);
+	}
+	
+	public void postToAPI(String json) {
 		try {
 			URL url = new URL(ProximityTracker.URL);
 			HttpURLConnection c = (HttpURLConnection) url.openConnection();
@@ -56,7 +60,6 @@ public class Broadcaster extends BukkitRunnable {
 			BufferedReader br = new BufferedReader(new InputStreamReader(c.getInputStream(), "utf-8"));
 			br.readLine();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

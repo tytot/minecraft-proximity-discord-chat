@@ -6,3 +6,13 @@ api-version: 1.16
 description: Tracks player proximity for Discord proximity voice chat.
 website: https://github.com/tytot/minecraft-proximity-chat-discord
 prefix: Proximity
+commands:
+  proximity:
+    description: Switch proximity chat on or off.
+    usage: /<command> (on|off)
+    permission: proximitytracker.switch
+    permission-message: You don't have permission to manage proximity chat.
+permissions:
+  proximitytracker.switch:
+    description: Gives access to proximity chat controls.
+    default: op

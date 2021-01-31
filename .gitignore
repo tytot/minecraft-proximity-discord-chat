@@ -13,4 +13,5 @@ plugin/.classpath
 plugin/.project
 plugin/.settings
 plugin/src/test
-plugin/target
+plugin/target/*
+!plugin/target/ProximityTracker*

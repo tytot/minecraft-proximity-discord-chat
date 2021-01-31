@@ -4,11 +4,15 @@
 #    \ \_\    \ \_\ \_\  \ \_____\   /\_\/\_\  \ \_\  \ \_\ \ \_\  \ \_\    \ \_\  \/\_____\ 
 #     \/_/     \/_/ /_/   \/_____/   \/_/\/_/   \/_/   \/_/  \/_/   \/_/     \/_/   \/_____/ 
                                                                                          
-# The number of milliseconds between each proximity broadcast to the server (default: 1000)
-broadcastInterval: 1000
+# Whether or not proximity chat is enabled by default (default: true)
+# Can be turned on or off with /proximity on or /proximity off
+enabledByDefault: true
 
-# The number of blocks away at which other players can no longer be heard (default: 25)
-cutoff: 25
+# The number of blocks away at which other players can no longer be heard (default: 50)
+cutoff: 50
 
 # The hostname of the proximity data API——you should have set this up earlier
 apiHost: xxx.herokuapp.com
+
+# The number of milliseconds between each proximity broadcast to the server (default: 500)
+broadcastInterval: 500
